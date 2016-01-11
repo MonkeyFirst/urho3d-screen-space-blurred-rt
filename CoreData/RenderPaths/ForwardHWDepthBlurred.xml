@@ -1,0 +1,48 @@
+<renderpath>
+    <rendertarget name="depth" sizedivisor="1 1" format="readabledepth" />
+    <rendertarget name="blurh" sizedivisor="2 2" format="rgba" filter="true" />
+    <rendertarget name="blurv" sizedivisor="2 2" format="rgba" filter="true" />
+    
+    <command type="clear" depth="1.0" output="depth" />
+    <command type="scenepass" pass="shadow" output="depth" />
+    <command type="clear" color="fog" depthstencil="depth" />
+    <command type="scenepass" pass="base" vertexlights="true" metadata="base" depthstencil="depth" />
+    <command type="forwardlights" pass="light" depthstencil="depth" />
+    <command type="scenepass" pass="postopaque" depthstencil="depth" />
+    <command type="scenepass" pass="refract" depthstencil="depth">
+        <texture unit="environment" name="viewport" />
+    </command>
+    <command type="scenepass" pass="alpha" vertexlights="true" sort="backtofront" metadata="alpha" depthstencil="depth"  />
+    <command type="quad" vs="CopyFramebuffer" ps="CopyFramebuffer" blend="replace" output="blurv">
+        <texture unit="diffuse" name="viewport" />
+    </command>
+    <command type="quad" tag="Blur" vs="Blur" ps="Blur" psdefines="BLUR5" output="blurh">
+        <parameter name="BlurDir" value="1.0 0.0" />
+        <parameter name="BlurRadius" value="2.0" />
+        <parameter name="BlurSigma" value="2.0" />
+        <texture unit="diffuse" name="Blurv" />
+    </command>
+    <command type="quad" tag="Blur" vs="Blur" ps="Blur" psdefines="BLUR5" output="blurv">
+        <parameter name="BlurDir" value="0.0 1.0" />
+        <parameter name="BlurRadius" value="2.0" />
+        <parameter name="BlurSigma" value="2.0" />
+        <texture unit="diffuse" name="blurh" />
+    </command>
+    <command type="quad" tag="Blur" vs="Blur" ps="Blur" psdefines="BLUR3" output="blurh">
+        <parameter name="BlurDir" value="1.0 0.0" />
+        <parameter name="BlurRadius" value="1.0" />
+        <parameter name="BlurSigma" value="2.0" />
+        <texture unit="diffuse" name="blurv" />
+    </command>
+    <command type="quad" tag="Blur" vs="Blur" ps="Blur" psdefines="BLUR3" output="blurv">
+        <parameter name="BlurDir" value="0.0 1.0" />
+        <parameter name="BlurRadius" value="1.0" />
+        <parameter name="BlurSigma" value="2.0" />
+        <texture unit="diffuse" name="blurh" />
+    </command>
+    <command type="scenepass" pass="blurred" vertexlights="true" depthstencil="depth" output="viewport">
+        <texture unit="environment" name="blurv" />
+        <texture unit="diffuse" name="viewport" />
+    </command>    
+    <command type="scenepass" pass="postalpha" sort="backtofront" depthstencil="depth" />
+</renderpath>

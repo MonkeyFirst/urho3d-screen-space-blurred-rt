@@ -1,0 +1,3 @@
+<technique vs="UnlitSSPRT" ps="UnlitSSPRT" vsdefines="SSPRT WEIGHTMASK" psdefines="DIFFMAP SSPRT WEIGHTMASK">
+    <pass name="blurred" />
+</technique>
